@@ -6,7 +6,6 @@ function Project(props) {
   return (
     <React.Fragment>
       <h1>{props.name}</h1>
-      <p>{props.id}</p>
       <a href={props.link}>Github Repo</a>
       {/* Image of project splash page */}
       <h2>{props.description}</h2>

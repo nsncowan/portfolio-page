@@ -14,6 +14,7 @@ function ProjectList(props) {
           // image={project.img}
           description={project.description}
           id={project.id} 
+          key={project.id}
           onClickingEdit2 = {props.onClickingEdit1}
           onClickingDelete2 = {props.onClickingDelete1}
           />
