@@ -3,6 +3,7 @@ import NewProjectForm from "./NewProjectForm";
 import EditProjectForm from"./EditProjectForm";
 import Project from "./Project";
 import ProjectList from "./ProjectList";
+import BioForm from './BioForm';
 import { db } from './../firebase.js';
 import { collection, addDoc, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 
@@ -18,9 +19,10 @@ function PortfolioControl() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [editing, setEditing] = useState(false); // how can we repurpose editing for skills, projects, and bio?
   const [error, setError] = useState(null);
+  const [project, setProject] = useState(true);
 
   useEffect(() => {
-    const unSubscribe = onSnapshot(
+    const unSubscribeProjects = onSnapshot(
       collection(db, 'projects'),
       (collectionSnapshot) => {
         const projects = [];
@@ -35,10 +37,47 @@ function PortfolioControl() {
         setMainProjectList(projects);
       },
       (error) => {
-
       }
     );
-    return () => unSubscribe();
+    const unSubscribeBio = onSnapshot(
+      collection(db, 'bio'),
+      (collectionSnapshot) => {
+        const userBio = [];
+        collectionSnapshot.forEach((doc) => {
+          userBio.push({
+            bio: doc.data().bio,
+            id: doc.id
+          });
+        });
+        setUserBio(userBio);
+      },
+      (error) => {
+      }
+    );
+    const unSubscribeSkillsList = onSnapshot(
+      collection(db, 'skillslist'),
+      (collectionSnapshot) => {
+        const userSkills = [];
+        collectionSnapshot.forEach((doc) => {
+          userSkills.push({
+            skill: doc.data().skill,
+            id: doc.id
+          });
+        });
+        setSkillsList(userSkills);
+      },
+      (error) => {
+      }
+    );
+
+    //Run the functions
+    const initialize = () => {
+      unSubscribeProjects();
+      unSubscribeBio();
+      unSubscribeSkillsList();
+      // console.log("Hello World");
+    }
+    return initialize;
   }, []);
   
   const handleDeletingProject = async (id) => {
@@ -47,7 +86,7 @@ function PortfolioControl() {
   }
 
   const handleEditingProject = async (projectToEdit) => {
-    const projectRef = doc(db, "projects", projectToEdit.id);
+    const projectRef = doc(db, "projects", projectToEdit.key);
     await updateDoc(projectRef, projectToEdit);
     setEditing(false);
     setSelectedProject(null);
@@ -67,10 +106,19 @@ function PortfolioControl() {
     setSelectedProject(selectedProject);
   }
 
+  const handleAddBioClick = () => {
+    setProject(false);
+  }
+
+  const handleAddingBio = async (newBio) => {
+    await addDoc(collection(db, "bio"), newBio);
+    setFormVisibleOnPage(false);
+    setProject(true);
+  }
+
   const handleClick = () => {
     if (selectedProject != null) {
       setFormVisibleOnPage(false);
-      // new code!
       setSelectedProject(null);
       setEditing(false);
     } else {
@@ -84,22 +132,33 @@ function PortfolioControl() {
   if(error) {
     currentlyVisibleState = <p>There was an error:{error}</p>
   } 
-  else if (editing) {
+  else if (editing && project) {
     currentlyVisibleState = <EditProjectForm project = {selectedProject} editProjectProp1 = {handleEditingProject} />;
     buttonText = "Return to Project List";
   } 
-  else if (formVisibleOnPage) {
+  else if (formVisibleOnPage && project) {
     currentlyVisibleState = <NewProjectForm createNewProjectProp1 = {handleAddingProject} />;
     buttonText = "Return to Project List";
   } 
+/*   else if (editing && !project) {
+    currentlyVisibleState = <EditProjectForm project = {selectedProject} editProjectProp1 = {handleEditingProject} />;
+    buttonText = "Return to Project List";
+  }  */
+  else if (formVisibleOnPage && !project) {
+    currentlyVisibleState = <BioForm addNewBioProp1 = {handleAddingBio} />;
+    buttonText = "Add Your Bio";
+  } 
   else {
-    currentlyVisibleState = <ProjectList 
+    currentlyVisibleState = 
+    <Bio />;
+    <ProjectList 
       projectList = {mainProjectList} 
       onClickingEdit1 = {handleEditClick} 
       onClickingDelete1 ={handleDeletingProject} 
       onProjectSelection1 = {handleChangingSelectedProject} />;
     buttonText = "Add Project";
   }
+
 
     return (
       <React.Fragment>
