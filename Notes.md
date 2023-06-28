@@ -8,13 +8,14 @@ add option for user sign in but not sign up
 
 
 Components:
-  - individual projects (github link with pic of splash page???)
-  - project list // edit, reusable form DONE
-  - project detail DONE
+  - *** individual projects (github link with pic of splash page???)
+  - *** project list // edit, reusable form DONE
+  - *** project detail DONE
   - skills list //add delete functionality (single form)
-  - bio // add delete functionality (single form)
+  - *** bio //
+  - add delete functionality (single form)
   - navbar / header
-  - add project 'form' - user can input github link DONE
+  - *** add project 'form' - user can input github link DONE
   - sign in 
 
 
