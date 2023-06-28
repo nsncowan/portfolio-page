@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types"; 
 
-
 function BioForm(props) {
 
   // form submission function
@@ -23,7 +22,7 @@ function BioForm(props) {
         <textarea 
           name="bioText" 
           placeholder="Write your bio here" />
-        <button type="submit">{buttonText}</button>
+        <button type="submit">Submit Your Bio</button>
       </form>
     </React.Fragment>
   );
