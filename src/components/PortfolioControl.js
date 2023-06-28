@@ -5,7 +5,7 @@ import EditProjectForm from"./EditProjectForm";
 import ProjectList from "./ProjectList";
 import BioForm from './BioForm';
 import Bio from './Bio';
-import { db } from './../firebase.js';
+import { db, auth } from './../firebase.js';
 import { collection, addDoc, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 
 function PortfolioControl() {
@@ -128,6 +128,14 @@ function PortfolioControl() {
     }
   }
 
+  if (auth.currentUser == null) {
+    return (
+      <React.Fragment>
+        <h1>You must be signed in to access the queue.</h1>
+      </React.Fragment>
+    )
+  } else if (auth.currentUser != null) {
+
   let currentlyVisibleState = null;
   let otherCurrentlyVisibleState = null;
   let buttonText = null;
@@ -175,8 +183,8 @@ function PortfolioControl() {
         {error ? null : <button onClick={handleAddBioClick}>{otherButtonText}</button>}
       </React.Fragment>
       );
-
     }
+  }
     
     export default PortfolioControl;
     
