@@ -2,7 +2,9 @@ import React from "react";
 
 function Header(){
   return (
-    <h1>Portfolio</h1>
+    <React.Fragment>
+      <h1>Bio</h1>
+    </React.Fragment>
   );
 }
 
