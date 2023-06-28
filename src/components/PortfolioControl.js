@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import NewProjectForm from "./NewProjectForm";
 import EditProjectForm from"./EditProjectForm";
-import Project from "./Project";
+//import Project from "./Project";
 import ProjectList from "./ProjectList";
 import BioForm from './BioForm';
+import Bio from './Bio';
 import { db } from './../firebase.js';
 import { collection, addDoc, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 
 function PortfolioControl() {
 
 //Information States
-  const [userBio, setUserBio] = useState(null);
+  const [userBio, setUserBio] = useState([]);
   const [skillsList, setSkillsList] = useState([]);
   const [mainProjectList, setMainProjectList] = useState([]);
 
@@ -40,13 +41,14 @@ function PortfolioControl() {
       }
     );
     const unSubscribeBio = onSnapshot(
-      collection(db, 'bio'),
+      collection(db, 'userBio'),
       (collectionSnapshot) => {
         const userBio = [];
         collectionSnapshot.forEach((doc) => {
           userBio.push({
-            bio: doc.data().bio,
-            id: doc.id
+            bioName: doc.data().bioName,
+            bioText: doc.data().bioText
+            //id: doc.id
           });
         });
         setUserBio(userBio);
@@ -111,7 +113,7 @@ function PortfolioControl() {
   }
 
   const handleAddingBio = async (newBio) => {
-    await addDoc(collection(db, "bio"), newBio);
+    await addDoc(collection(db, "userBio"), newBio);
     setFormVisibleOnPage(false);
     setProject(true);
   }
@@ -127,7 +129,9 @@ function PortfolioControl() {
   }
 
   let currentlyVisibleState = null;
+  let otherCurrentlyVisibleState = null;
   let buttonText = null;
+  let otherButtonText = null;
 
   if(error) {
     currentlyVisibleState = <p>There was an error:{error}</p>
@@ -144,27 +148,36 @@ function PortfolioControl() {
     currentlyVisibleState = <EditProjectForm project = {selectedProject} editProjectProp1 = {handleEditingProject} />;
     buttonText = "Return to Project List";
   }  */
-  else if (formVisibleOnPage && !project) {
+  else if (!formVisibleOnPage && !project) {
     currentlyVisibleState = <BioForm addNewBioProp1 = {handleAddingBio} />;
-    buttonText = "Add Your Bio";
   } 
   else {
     currentlyVisibleState = 
-    <Bio />;
-    <ProjectList 
+      <ProjectList 
       projectList = {mainProjectList} 
       onClickingEdit1 = {handleEditClick} 
       onClickingDelete1 ={handleDeletingProject} 
       onProjectSelection1 = {handleChangingSelectedProject} />;
     buttonText = "Add Project";
+    otherCurrentlyVisibleState = 
+      <Bio 
+      bioName = {userBio[0].bioName}
+      bioText = {userBio[0].bioText} 
+      onClickingAddBio = {handleAddBioClick} />;
+    otherButtonText = "Add Bio";
   }
-
 
     return (
       <React.Fragment>
+        {otherCurrentlyVisibleState}
         {currentlyVisibleState}
         {error ? null : <button onClick={handleClick}>{buttonText}</button>}
+        {error ? null : <button onClick={handleAddBioClick}>{otherButtonText}</button>}
       </React.Fragment>
       );
-}
-export default PortfolioControl;
+
+    }
+    
+    export default PortfolioControl;
+    
+    
