@@ -9,7 +9,7 @@ import { db, auth } from './../firebase.js';
 import { collection, addDoc, doc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 
 function PortfolioControl() {
-
+  
 //Information States
   const [userBio, setUserBio] = useState([]);
   const [skillsList, setSkillsList] = useState([]);
@@ -135,7 +135,6 @@ function PortfolioControl() {
       </React.Fragment>
     )
   } else if (auth.currentUser != null) {
-
   let currentlyVisibleState = null;
   let otherCurrentlyVisibleState = null;
   let buttonText = null;
@@ -162,7 +161,7 @@ function PortfolioControl() {
   else {
     currentlyVisibleState = 
       <ProjectList 
-      projectList = {mainProjectList} 
+      projectList = {mainProjectList}
       onClickingEdit1 = {handleEditClick} 
       onClickingDelete1 ={handleDeletingProject} 
       onProjectSelection1 = {handleChangingSelectedProject} />;
